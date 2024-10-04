@@ -3,120 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prediction Results</title>
+    <title>Period Number Prediction</title>
     <style>
+        /* Universal Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
         body {
-            background-color: #f0e4f7;
-            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('crackerboy.png') no-repeat center center fixed; /* Updated background image */
+            background-size: cover;
+            color: #E0F7FA; /* Light Cyan text color */
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #00C8FF; /* Electric blue */
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0px 4px 10px rgba(0, 0, 255, 0.8); /* Glowing shadow */
+        }
+
+        .container {
+            background: rgba(0, 0, 50, 0.7); /* Dark blue transparent box */
+            padding: 40px 60px;
+            border-radius: 20px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px); /* Blur effect for modern feel */
             text-align: center;
-            margin-top: 50px;
+            max-width: 400px;
+            width: 100%;
         }
-        #result-box {
-            display: inline-block;
-            padding: 20px;
-            border: 3px solid #FF1493;
-            border-radius: 10px;
-            font-size: 24px;
-            color: white;
-            background: linear-gradient(to right, #ff6699, #ffccff);
+
+        .stats {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.4), inset -4px -4px 10px rgba(255, 255, 255, 0.1); /* Neumorphism effect */
+            color: #E0F7FA; /* Light Cyan text color */
         }
-        #timer {
-            font-size: 30px;
-            margin-top: 20px;
-        }
-        #history {
+
+        .button-container {
             margin-top: 30px;
         }
-        table {
-            width: 50%;
-            margin: auto;
-            border-collapse: collapse;
+
+        .button {
+            text-decoration: none;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            border-radius: 25px;
+            background-color: #ff007f; /* Neon Pink Button */
+            color: #ffffff;
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2), -4px -4px 10px rgba(255, 255, 255, 0.1); /* Soft neumorphism */
+            transition: all 0.3s ease;
         }
-        table, th, td {
-            border: 2px solid yellowgreen;
-            border-radius: 5px;
+
+        .button:hover {
+            background-color: #cc0066; /* Darker neon pink on hover */
+            box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.5), -4px -4px 15px rgba(255, 255, 255, 0.2); /* Intense glow on hover */
         }
-        th, td {
-            padding: 10px;
-            text-align: center;
+
+        @media(max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .stats {
+                font-size: 1.2rem;
+            }
+
+            .button {
+                font-size: 1rem;
+                padding: 10px 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>BN LAST KING </h1>
-    <div id="result-box">Result: Waiting...</div>
-    <div id="timer">Timer: 00:00</div>
-    <div id="history">
-        <h2>Result History</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Period</th>
-                    <th>Result</th>
-                </tr>
-            </thead>
-            <tbody id="result-history">
-            </tbody>
-        </table>
+
+    <div class="container">
+        <h1>BN LAST KING</h1>
+
+        <div id="timer30s" class="stats">Timer: 30</div>
+        <div id="period30s" class="stats">Period Number: 0</div>
+        <div id="result" class="stats">Result: </div>
+
+        <!-- Telegram Channel Button -->
+        <div class="button-container">
+            <a href="https://t.me/BNLASTKINGHACK" class="button" target="_blank">Join Our Telegram Channel</a>
+        </div>
     </div>
 
     <script>
-        // List of results to predict
-        const results = ["SMALL", "BIG"];
-        let periodNumber = 10000;  // Initial period number
-        let resultSpoken = false;  // Ensure result is spoken once per period
+        let previousPeriod = '';
 
-        // Function to speak the result using Web Speech API
-        function speakResult(result) {
-            const speech = new SpeechSynthesisUtterance(result);
-            // Select a girl's voice, fallback to default if unavailable
-            speech.voice = speechSynthesis.getVoices().find(voice => voice.name.includes("Google UK English Female")) || speechSynthesis.getVoices()[0];
-            speech.rate = 1;  // Normal speech rate
-            speech.pitch = 1; // Normal pitch
-            speechSynthesis.speak(speech);
+        function formatTime(seconds) {
+            return seconds + 's';
         }
 
-        // Function to update the result and timer every 1 minute
-        function updateResult() {
-            const resultBox = document.getElementById('result-box');
-            const timerBox = document.getElementById('timer');
-            const resultHistory = document.getElementById('result-history');
+        function predictResult(periodNumber) {
+            // Get the last digit of the period number to determine BIG or SMALL
+            const lastDigit = parseInt(periodNumber.slice(-1));
 
-            if (!resultSpoken) {
-                // Randomly select a result from the list (either SMALL or BIG)
-                const randomResult = results[Math.floor(Math.random() * results.length)];
-                periodNumber++;
+            // Determine if BIG or SMALL
+            const bigSmall = lastDigit >= 5 ? "BIG" : "SMALL";
 
-                // Update displayed result
-                resultBox.textContent = `Result: ${randomResult}`;
+            // Calculate the sum of all digits in the period number
+            const sumOfDigits = periodNumber.split('').reduce((sum, digit) => sum + parseInt(digit), 0);
 
-                // Speak the result (only once per period)
-                speakResult(randomResult);
-                resultSpoken = true;
+            // Determine if RED or GREEN based on sum of digits (even or odd)
+            const redGreen = sumOfDigits % 2 === 0 ? "RED" : "GREEN";
 
-                // Add result to the history table
-                const row = document.createElement('tr');
-                row.innerHTML = `<td>${periodNumber}</td><td>${randomResult}</td>`;
-                resultHistory.prepend(row);  // Add new result to the top of the table
+            return `${bigSmall}/${redGreen}`;
+        }
+
+        setInterval(function () {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const remainingSeconds = 30 - (seconds % 30);
+
+            // Get current minutes and convert to total minutes from start of day
+            const totalMinutes = now.getHours() * 60 + now.getMinutes();
+
+            // Generate period number with current year, month, day, and 30-second intervals
+            const periodNumber = now.getFullYear().toString() + 
+                String(now.getMonth() + 1).padStart(2, '0') + 
+                String(now.getDate()).padStart(2, '0') + 
+                "30" + 
+                (1 + totalMinutes * 2 + (seconds >= 30 ? 1 : 0));
+
+            // Update timer display with remaining seconds
+            document.getElementById('timer30s').textContent = `Timer: ${formatTime(remainingSeconds)}`;
+
+            // Update period number display
+            document.getElementById('period30s').textContent = "Period Number: " + periodNumber;
+
+            // Check for a period change and update result
+            if (periodNumber !== previousPeriod) {
+                previousPeriod = periodNumber;
+
+                // Predict result based on the period number
+                const resultPrediction = predictResult(periodNumber);
+
+                document.getElementById('result').textContent = "Result: " + resultPrediction;
             }
-
-            // Timer logic
-            let remainingSeconds = 60;  // Timer starts at 60 seconds
-            const countdown = setInterval(() => {
-                remainingSeconds--;
-                timerBox.textContent = `Timer: 00:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-                if (remainingSeconds <= 0) {
-                    clearInterval(countdown);
-                    resultSpoken = false;  // Reset for the next period
-                    updateResult();  // Call the updateResult function again for the next period
-                }
-            }, 1000);  // Update every second
-        }
-
-        // Start the first result update
-        window.onload = function() {
-            updateResult();  // Call the function when the page loads
-        };
+        }, 1000);
     </script>
+
 </body>
 </html>
