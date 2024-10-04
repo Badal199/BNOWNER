@@ -3,166 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Period Number Prediction</title>
+    <title>Prediction Results - 30-Second SMALL BIG Pattern</title>
     <style>
-        /* Universal Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
         body {
-            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: pink;
+            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: url('crackerboy.png') no-repeat center center fixed; /* Updated background image */
-            background-size: cover;
-            color: #E0F7FA; /* Light Cyan text color */
-        }
-
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #00C8FF; /* Electric blue */
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            text-shadow: 0px 4px 10px rgba(0, 0, 255, 0.8); /* Glowing shadow */
+            height: 100vh;
+            margin: 0;
         }
 
         .container {
-            background: rgba(0, 0, 50, 0.7); /* Dark blue transparent box */
-            padding: 40px 60px;
-            border-radius: 20px;
-            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px); /* Blur effect for modern feel */
             text-align: center;
-            max-width: 400px;
-            width: 100%;
-        }
-
-        .stats {
-            font-size: 1.5rem;
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 105, 180, 0.8); /* Pink with transparency */
+            border: 2px solid pink;
             border-radius: 15px;
-            box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.4), inset -4px -4px 10px rgba(255, 255, 255, 0.1); /* Neumorphism effect */
-            color: #E0F7FA; /* Light Cyan text color */
+            padding: 20px;
+            width: 60%;
         }
 
-        .button-container {
-            margin-top: 30px;
+        .header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #fff;
         }
 
-        .button {
+        .timer {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #ff00ff; /* Bright pink */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid pink;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #ff69b4;
+            color: #fff;
+        }
+
+        td {
+            background-color: #ff1493;
+            color: #fff;
+            transition: color 0.5s, background-color 0.5s; /* RGB LED effect */
+        }
+
+        .history-container {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgba(255, 20, 147, 0.9); /* Pink background */
+            border-radius: 10px;
+            border: 2px solid pink;
+        }
+
+        .history-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .history-item {
+            margin-bottom: 5px;
+        }
+
+        /* RGB LED Effect for Result Display */
+        td:nth-child(2) {
+            animation: rgbEffect 1.5s infinite;
+        }
+
+        @keyframes rgbEffect {
+            0% { background-color: red; }
+            33% { background-color: green; }
+            66% { background-color: blue; }
+            100% { background-color: red; }
+        }
+
+        /* Telegram Button */
+        .telegram-button {
+            margin-top: 20px;
+            background-color: #0088cc;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
             text-decoration: none;
-            padding: 12px 24px;
-            font-size: 1.2rem;
-            border-radius: 25px;
-            background-color: #ff007f; /* Neon Pink Button */
-            color: #ffffff;
-            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2), -4px -4px 10px rgba(255, 255, 255, 0.1); /* Soft neumorphism */
-            transition: all 0.3s ease;
+            font-weight: bold;
+            display: inline-block;
+            transition: background-color 0.3s ease;
         }
 
-        .button:hover {
-            background-color: #cc0066; /* Darker neon pink on hover */
-            box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.5), -4px -4px 15px rgba(255, 255, 255, 0.2); /* Intense glow on hover */
-        }
-
-        @media(max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 2.5rem;
-            }
-
-            .stats {
-                font-size: 1.2rem;
-            }
-
-            .button {
-                font-size: 1rem;
-                padding: 10px 20px;
-            }
+        .telegram-button:hover {
+            background-color: #005f99;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <h1>BN LAST KING</h1>
+        <div class="header">Prediction Results: BN LAST KING </div>
+        <div class="timer" id="timerDisplay">Time Remaining: 00:00</div>
+        <div class="period" id="periodDisplay">Period Number: --</div>
+        
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>Period Number</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Results will be appended here -->
+            </tbody>
+        </table>
 
-        <div id="timer30s" class="stats">Timer: 30</div>
-        <div id="period30s" class="stats">Period Number: 0</div>
-        <div id="result" class="stats">Result: </div>
-
-        <!-- Telegram Channel Button -->
-        <div class="button-container">
-            <a href="https://t.me/BNLASTKINGHACK" class="button" target="_blank">Join Our Telegram Channel</a>
+        <div class="history-container">
+            <div class="history-header">Result History</div>
+            <div id="resultHistory">
+                <!-- History will be displayed here -->
+            </div>
         </div>
+
+        <!-- Telegram Join Button -->
+        <a href="https://t.me/BNLASTKINGHACK" class="telegram-button" target="_blank">JOIN CHANNEL</a>
     </div>
 
     <script>
-        let previousPeriod = '';
+        let pattern = ['SMALL', 'BIG'];
+        let periodNumber = 10000;
+        let resultHistory = [];
 
-        function formatTime(seconds) {
-            return seconds + 's';
-        }
-
-        function predictResult(periodNumber) {
-            // Get the last digit of the period number to determine BIG or SMALL
-            const lastDigit = parseInt(periodNumber.slice(-1));
-
-            // Determine if BIG or SMALL
-            const bigSmall = lastDigit >= 5 ? "BIG" : "SMALL";
-
-            // Calculate the sum of all digits in the period number
-            const sumOfDigits = periodNumber.split('').reduce((sum, digit) => sum + parseInt(digit), 0);
-
-            // Determine if RED or GREEN based on sum of digits (even or odd)
-            const redGreen = sumOfDigits % 2 === 0 ? "RED" : "GREEN";
-
-            return `${bigSmall}/${redGreen}`;
-        }
-
+        // JavaScript Timer for 30-Second Interval
         setInterval(function () {
-            const now = new Date();
-            const seconds = now.getSeconds();
-            const remainingSeconds = 30 - (seconds % 30);
+            let now = new Date();
+            let seconds = now.getSeconds();
+            let remainingSeconds = 30 - (seconds % 30);  // 30-second interval
+            let totalMinutes = now.getHours() * 60 + now.getMinutes();
+            let periodNum = now.toISOString().slice(0, 10).replace(/-/g, '') + 
+                            "30" + (1 + totalMinutes * 2 + (seconds >= 30 ? 1 : 0));
 
-            // Get current minutes and convert to total minutes from start of day
-            const totalMinutes = now.getHours() * 60 + now.getMinutes();
+            document.getElementById("timerDisplay").textContent = `Time Remaining: 00:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+            document.getElementById("periodDisplay").textContent = `Period Number: ${periodNum}`;
 
-            // Generate period number with current year, month, day, and 30-second intervals
-            const periodNumber = now.getFullYear().toString() + 
-                String(now.getMonth() + 1).padStart(2, '0') + 
-                String(now.getDate()).padStart(2, '0') + 
-                "30" + 
-                (1 + totalMinutes * 2 + (seconds >= 30 ? 1 : 0));
-
-            // Update timer display with remaining seconds
-            document.getElementById('timer30s').textContent = `Timer: ${formatTime(remainingSeconds)}`;
-
-            // Update period number display
-            document.getElementById('period30s').textContent = "Period Number: " + periodNumber;
-
-            // Check for a period change and update result
-            if (periodNumber !== previousPeriod) {
-                previousPeriod = periodNumber;
-
-                // Predict result based on the period number
-                const resultPrediction = predictResult(periodNumber);
-
-                document.getElementById('result').textContent = "Result: " + resultPrediction;
+            // When remainingSeconds is 30 or 0, update result
+            if (remainingSeconds === 30 || remainingSeconds === 0) {
+                let result = pattern[periodNumber % pattern.length];
+                updateResults(periodNum, result);
+                periodNumber++;
             }
         }, 1000);
-    </script>
 
+        function updateResults(period, result) {
+            // Append to result table
+            let tableBody = document.querySelector("#resultTable tbody");
+            let newRow = `<tr><td>${period}</td><td>${result}</td></tr>`;
+            tableBody.insertAdjacentHTML('afterbegin', newRow);
+
+            // Update result history
+            resultHistory.unshift(`${period}: ${result}`);
+            document.getElementById("resultHistory")
+.innerHTML = resultHistory.slice(0, 5).map(item => `<div class="history-item">${item}</div>`).join('');
+        }
+    </script>
 </body>
 </html>
